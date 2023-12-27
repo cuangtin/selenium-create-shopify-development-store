@@ -22,34 +22,29 @@ driver = webdriver.Firefox(options=options)
 
 print("Open browser")
 driver.get("https://partners.shopify.com/organizations")
-print("Maximize browser")
 driver.maximize_window()
-#login process
-# try:
-print("Login process")
-print(driver.title + " - " + driver.current_url)
-emailField = driver.find_element(By.ID, 'account_email')
-emailField.clear();
-emailField.send_keys(email)
-continueButton = driver.find_element(By.XPATH, "//div[@data-define='{showShopLoader: false}']")
-time.sleep(3.5)
-continueButton.click()
-passwordField = WebDriverWait(driver, 5).until(
-        EC.presence_of_element_located((By.ID, 'account_password'))
-)
-passwordField.send_keys(password)
-print("Click login button")
-time.sleep(10)
-# submit = driver.find_element(By.LINK_TEXT,'Log in')
 
-submit = driver.find_element(By.CLASS_NAME, 'footer-form-submit')
-submit.click()
-print("Login success")
-# except:
-#     driver.quit()
-#forward to create development store page
 try:
-    print("Forward to create development store page")
+    print("Login page")
+    emailField = driver.find_element(By.ID, 'account_email')
+    emailField.clear();
+    emailField.send_keys(email)
+    continueButton = driver.find_element(By.XPATH, "//div[@data-define='{showShopLoader: false}']")
+    time.sleep(3.5)
+    continueButton.click()
+    passwordField = WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((By.ID, 'account_password'))
+    )
+    passwordField.send_keys(password)
+    time.sleep(4)
+    submit = driver.find_element(By.CLASS_NAME, 'footer-form-submit')
+    submit.click()
+    print("Login success")
+except:
+    driver.quit()
+
+try:
+    print("Partner dashboard")
     addButton = WebDriverWait(driver, 5).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, 'button.Polaris-Button--primary'))
     )
@@ -61,30 +56,27 @@ try:
 except:
     driver.quit()
 
-#form create store
-# try:
-print("Form create store")
-testStoreRadio = WebDriverWait(driver, 5).until(
-    EC.presence_of_element_located((By.ID, 'test_store'))
-)
-actionsForm = webdriver.ActionChains(driver)
-actionsForm.click(testStoreRadio).perform()
-storeNameInput = driver.find_element(By.CSS_SELECTOR, 'input[placeholder="Store name"]')
-actionsForm.send_keys_to_element(storeNameInput, storeName).perform()
-submitButton = driver.find_element(By.ID, 'create-new-store-button')
-time.sleep(2)
-driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
-print("Click submit button")
-submitButton.click()
-# except:
-#     driver.close()
+try:
+    print("Create store page")
+    testStoreRadio = WebDriverWait(driver, 5).until(
+        EC.presence_of_element_located((By.ID, 'test_store'))
+    )
+    actionsForm = webdriver.ActionChains(driver)
+    actionsForm.click(testStoreRadio).perform()
+    storeNameInput = driver.find_element(By.CSS_SELECTOR, 'input[placeholder="Store name"]')
+    actionsForm.send_keys_to_element(storeNameInput, storeName).perform()
+    submitButton = driver.find_element(By.ID, 'create-new-store-button')
+    time.sleep(2)
+    driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+    print("Click submit button")
+    submitButton.click()
+except:
+    driver.close()
 
-# add staff
-print("Add staff")
+print("Add staff page")
 time.sleep(28)
 driver.get("https://admin.shopify.com/store/"+storeName+"/settings/account/new")
 time.sleep(7)
-print("Form add staff")
 formAddStaff = ActionChains(driver)
 formAddStaff.send_keys_to_element(driver.find_element(By.CSS_SELECTOR, 'input[name="firstName"]'), customerFirstName)
 formAddStaff.send_keys_to_element(driver.find_element(By.CSS_SELECTOR, 'input[name="lastName"]'), customerLastName)
