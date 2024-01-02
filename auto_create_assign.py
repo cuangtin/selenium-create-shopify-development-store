@@ -7,6 +7,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from webdriver_manager.firefox import GeckoDriverManager
 
 load_dotenv()
 email = os.getenv('EMAIL')
@@ -18,12 +20,13 @@ customerLastName = os.getenv('CUSTOMER_LAST_NAME')
 
 options = Options()
 options.add_argument("--headless")
-driver = webdriver.Firefox(options=options)
+# options.binary_location = '/usr/bin/firefox'
+# driver = webdriver.Firefox(options=options, service=FirefoxService(GeckoDriverManager().install()))
+driver = webdriver.Remote("http://localhost:4444/wd/hub", options=options)
 
 print("Open browser")
 driver.get("https://partners.shopify.com/organizations")
 driver.maximize_window()
-
 try:
     print("Login page")
     emailField = driver.find_element(By.ID, 'account_email')
@@ -40,6 +43,7 @@ try:
     submit = driver.find_element(By.CLASS_NAME, 'footer-form-submit')
     submit.click()
     print("Login success")
+    driver.quit()
 except:
     driver.quit()
 
@@ -68,13 +72,13 @@ try:
     submitButton = driver.find_element(By.ID, 'create-new-store-button')
     time.sleep(2)
     driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
-    print("Click submit button")
     submitButton.click()
+    print("Create store processing... ~ 28s")
 except:
     driver.close()
 
-print("Add staff page")
 time.sleep(28)
+print("Add staff page")
 driver.get("https://admin.shopify.com/store/"+storeName+"/settings/account/new")
 time.sleep(7)
 formAddStaff = ActionChains(driver)
