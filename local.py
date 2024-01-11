@@ -7,8 +7,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.service import Service as FirefoxService
-from webdriver_manager.firefox import GeckoDriverManager
 
 load_dotenv()
 email = os.getenv('EMAIL')
@@ -20,8 +18,7 @@ customerLastName = os.getenv('CUSTOMER_LAST_NAME')
 
 options = Options()
 options.add_argument("--headless")
-
-driver = webdriver.Chrome(options=options)
+driver = webdriver.Firefox(options=options)
 
 print("Open browser")
 driver.get("https://partners.shopify.com/organizations")
@@ -34,6 +31,7 @@ try:
     continueButton = driver.find_element(By.XPATH, "//div[@data-define='{showShopLoader: false}']")
     time.sleep(3.5)
     continueButton.click()
+    print("Password process")
     passwordField = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.ID, 'account_password'))
     )
@@ -43,6 +41,7 @@ try:
     submit.click()
     print("Login success")
 except:
+    print("Login failed")
     driver.quit()
 
 try:
@@ -56,6 +55,7 @@ try:
     print("Click create development store button")
     createFwButton.click()
 except:
+    print("Not redirect partner dashboard")
     driver.get("https://partners.shopify.com/2023805/stores/new?store_type=test_store")
 
 try:
@@ -73,22 +73,28 @@ try:
     submitButton.click()
     print("Create store processing... ~ 28s")
 except:
+    print("Create store failed")
     driver.quit()
 
 time.sleep(28)
 print("Add staff page")
-driver.get("https://admin.shopify.com/store/"+storeName+"/settings/account/new")
-time.sleep(7)
-formAddStaff = ActionChains(driver)
-formAddStaff.send_keys_to_element(driver.find_element(By.CSS_SELECTOR, 'input[name="firstName"]'), customerFirstName)
-formAddStaff.send_keys_to_element(driver.find_element(By.CSS_SELECTOR, 'input[name="lastName"]'), customerLastName)
-formAddStaff.send_keys_to_element(driver.find_element(By.CSS_SELECTOR, 'input[name="email"]'), customerEmail)
-formAddStaff.click(driver.find_element(By.XPATH, '//span[text()="Select all permissions"]'))
-formAddStaff.perform()
-time.sleep(1)
-driver.find_element(By.XPATH, '//span[text()="Send invite"]').click()
-time.sleep(2)
-driver.find_element(By.XPATH, '//span[text()="Confirm"]').click()
-time.sleep(3)
-print("Done")
+try:
+    driver.get("https://admin.shopify.com/store/"+storeName+"/settings/account/new/")
+    time.sleep(7)
+    formAddStaff = ActionChains(driver)
+    formAddStaff.send_keys_to_element(driver.find_element(By.CSS_SELECTOR, 'input[name="firstName"]'), customerFirstName)
+    formAddStaff.send_keys_to_element(driver.find_element(By.CSS_SELECTOR, 'input[name="lastName"]'), customerLastName)
+    formAddStaff.send_keys_to_element(driver.find_element(By.CSS_SELECTOR, 'input[name="email"]'), customerEmail)
+    formAddStaff.click(driver.find_element(By.XPATH, '//span[text()="Select all permissions"]'))
+    print("Add staff information")
+    formAddStaff.perform()
+    time.sleep(1)
+    print("Confirm add staff")
+    driver.find_element(By.XPATH, '//span[text()="Send invite"]').click()
+    time.sleep(2)
+    driver.find_element(By.XPATH, '//span[text()="Confirm"]').click()
+    time.sleep(3)
+    print("Done")
+except:
+    print("Add staff failed")
 driver.quit()
