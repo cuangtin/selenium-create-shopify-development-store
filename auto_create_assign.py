@@ -43,7 +43,6 @@ try:
     submit = driver.find_element(By.CLASS_NAME, 'footer-form-submit')
     submit.click()
     print("Login success")
-    driver.quit()
 except:
     driver.quit()
 
