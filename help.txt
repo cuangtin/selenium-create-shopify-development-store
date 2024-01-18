@@ -1,7 +1,7 @@
 **Requirement
 Python 3.12.1
 pip 23.2.1
-pip install selenium undetected-chromedriver python-dotenv webdriver-manager fake-useragent
+pip3 install selenium undetected-chromedriver python-dotenv webdriver-manager fake-useragent
 
 **Create webdriver network
 docker network create webdriver
